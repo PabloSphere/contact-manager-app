@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Consumer } from '../../context';
 import TextInputGroup from '../layout/TextInputGroup';
-import uuid from 'uuid';
+//import uuid from 'uuid';
+import axios from 'axios';
 
 class AddContact extends Component {
   state = {
@@ -35,13 +36,16 @@ class AddContact extends Component {
     }
 
     const newContact = {
-      id: uuid(),
+      // id: uuid(),
       name: name,
       //or just name (they cancel each other out)
       email: email,
       phone: phone,
     };
-    dispatch({ type: 'ADD_CONTACT', payload: newContact });
+
+    axios
+      .post(`https://jsonplaceholder.typicode.com/users`, newContact)
+      .then(res => dispatch({ type: 'ADD_CONTACT', payload: res.data }));
 
     //clears state after sumbitting new contact
     this.setState({
@@ -50,6 +54,8 @@ class AddContact extends Component {
       phone: '',
       errors: {},
     });
+    //redirects to home page - contact list - after submitting
+    this.props.history.push('/');
   };
 
   onChange = e => this.setState({ [e.target.name]: e.target.value });
